@@ -1,42 +1,148 @@
+import { useState } from "react";
+import { useEditVideoMutation } from "../../features/api/apiSlice";
+import Error from "../ui/Error";
+import Success from "../ui/Success";
 import TextArea from "../ui/TextArea";
 import TextInput from "../ui/TextInput";
 
-export default function Form() {
+export default function Form({ video }) {
+  const {
+    id,
+    title: initialTitle,
+    description: initialDescription,
+    author: initialAuthor,
+    link: initialLink,
+    thumbnail: initialThumbnail,
+    views: initialViews,
+    duration: initialDuration,
+    date: initialDate,
+  } = video;
+
+  const [
+    editVideo,
+    { data: editedVideo, isLoading, isError, error, isSuccess },
+  ] = useEditVideoMutation();
+
+  const [title, setTitle] = useState(initialTitle);
+  const [author, setAuthor] = useState(initialAuthor);
+  const [description, setDescription] = useState(initialDescription);
+  const [link, setLink] = useState(initialLink);
+  const [thumbnail, setThumbnail] = useState(initialThumbnail);
+  const [date, setDate] = useState(initialDate);
+  const [duration, setDuration] = useState(initialDuration);
+  const [views, setViews] = useState(initialViews);
+
+  // const resetForm = () => {
+  //   setTitle("");
+  //   setDescription("");
+  //   setAuthor("");
+  //   setLink("");
+  //   setDuration("");
+  //   setDate("");
+  //   setViews("");
+  //   setThumbnail("");
+  // };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    editVideo({
+      id,
+      data: {
+        title,
+        description,
+        author,
+        link,
+        thumbnail,
+        date,
+        duration,
+        views,
+      },
+    });
+    // resetForm();
+  };
   return (
-    <form action="#" method="POST">
+    <form method="POST" onSubmit={handleSubmit}>
       <div className="shadow overflow-hidden sm:rounded-md">
         <div className="px-4 py-5 bg-white sm:p-6">
           <div className="grid grid-cols-6 gap-6">
             <div className="col-span-6 sm:col-span-3">
-              <TextInput title="Video Title" className="h-100 p-1" />
+              <TextInput
+                title="Video Title"
+                value={title}
+                onChange={(e) => {
+                  setTitle(e.target.value);
+                }}
+              />
             </div>
 
             <div className="col-span-6 sm:col-span-3">
-              <TextInput title="Author" className="p-1" />
+              <TextInput
+                title="Author"
+                value={author}
+                onChange={(e) => {
+                  setAuthor(e.target.value);
+                }}
+              />
             </div>
 
             <div className="col-span-6">
-              <TextArea title="Description" className="p-1" />
+              <TextArea
+                title="Description"
+                value={description}
+                onChange={(e) => {
+                  setDescription(e.target.value);
+                }}
+              />
             </div>
 
             <div className="col-span-6">
-              <TextInput title="YouTube Video link" className="p-1" />
+              <TextInput
+                title="YouTube Video link"
+                value={link}
+                onChange={(e) => {
+                  setLink(e.target.value);
+                }}
+              />
             </div>
 
             <div className="col-span-6">
-              <TextInput title="Thumbnail link" className="p-1" />
+              <TextInput
+                title="Thumbnail link"
+                value={thumbnail}
+                onChange={(e) => {
+                  setThumbnail(e.target.value);
+                }}
+              />
             </div>
 
             <div className="col-span-6 sm:col-span-6 lg:col-span-2">
-              <TextInput title="Upload Date" className="p-1" />
+              <TextInput
+                title="Upload Date"
+                value={date}
+                onChange={(e) => {
+                  setDate(e.target.value);
+                }}
+              />
             </div>
 
             <div className="col-span-6 sm:col-span-3 lg:col-span-2">
-              <TextInput title="Video Duration" className="p-1" />
+              <TextInput
+                title="Video Duration"
+                value={duration}
+                onChange={(e) => {
+                  setDuration(e.target.value);
+                }}
+              />
             </div>
 
             <div className="col-span-6 sm:col-span-3 lg:col-span-2">
-              <TextInput title="Video no of views" className="p-1" />
+              <TextInput
+                title="Video no of views"
+                value={views}
+                onChange={(e) => {
+                  setViews(e.target.value);
+                }}
+              />
             </div>
           </div>
         </div>
@@ -48,6 +154,8 @@ export default function Form() {
             Save
           </button>
         </div>
+        {isSuccess && <Success message="Video was edited successfully" />}
+        {isError && <Error message={error.message} />}
       </div>
     </form>
   );
